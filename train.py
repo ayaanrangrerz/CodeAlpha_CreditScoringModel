@@ -57,6 +57,13 @@ def build_pipeline(X: pd.DataFrame, estimator) -> Pipeline:
     return Pipeline([("preprocessor", preprocessor), ("classifier", estimator)])
 
 
+def bad_class_roc_auc(estimator, features, labels) -> float:
+    """Calculate ROC-AUC with the bad-risk class explicitly treated as positive."""
+    bad_index = list(estimator.classes_).index("bad")
+    probabilities = estimator.predict_proba(features)[:, bad_index]
+    return float(roc_auc_score((labels == "bad").astype(int), probabilities))
+
+
 def main() -> None:
     MODEL_DIR.mkdir(exist_ok=True)
     REPORT_DIR.mkdir(exist_ok=True)
@@ -80,20 +87,20 @@ def main() -> None:
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     scoring = {
         "bad_recall": make_scorer(recall_score, pos_label="bad", zero_division=0),
-        "roc_auc": "roc_auc",
+        "bad_roc_auc": bad_class_roc_auc,
     }
     results = {}
     for name, estimator in candidates.items():
         pipeline = build_pipeline(X_train, estimator)
         scores = cross_validate(
             pipeline, X_train, y_train, cv=cv, scoring=scoring,
-            n_jobs=-1, return_train_score=False
+            n_jobs=1, return_train_score=False
         )
         results[name] = {
             "cv_bad_recall_mean": float(scores["test_bad_recall"].mean()),
             "cv_bad_recall_std": float(scores["test_bad_recall"].std()),
-            "cv_roc_auc_mean": float(scores["test_roc_auc"].mean()),
-            "cv_roc_auc_std": float(scores["test_roc_auc"].std()),
+            "cv_bad_roc_auc_mean": float(scores["test_bad_roc_auc"].mean()),
+            "cv_bad_roc_auc_std": float(scores["test_bad_roc_auc"].std()),
         }
         print(f"{name}: CV bad recall={results[name]['cv_bad_recall_mean']:.3f}, "
               f"CV ROC-AUC={results[name]['cv_roc_auc_mean']:.3f}")
@@ -103,7 +110,7 @@ def main() -> None:
         results,
         key=lambda name: (
             results[name]["cv_bad_recall_mean"],
-            results[name]["cv_roc_auc_mean"],
+            results[name]["cv_bad_roc_auc_mean"],
         ),
     )
     best_model = build_pipeline(X_train, candidates[best_name])
