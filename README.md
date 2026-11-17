@@ -1,6 +1,17 @@
-# CodeAlpha_CreditScoringModel
+# CreditLens
 
-A professional educational machine-learning project that estimates credit risk using the Statlog (German Credit Data) dataset.
+<p align="center">
+  <strong>Machine Learning-Based Credit Risk Assessment</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Scikit--learn-Machine%20Learning-orange?logo=scikitlearn&logoColor=white" alt="Scikit-learn">
+  <img src="https://img.shields.io/badge/Streamlit-Interactive%20App-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Dataset-German%20Credit-informational" alt="German Credit dataset">
+</p>
+
+CreditLens is an educational end-to-end machine learning project that estimates credit risk using the Statlog (German Credit Data) dataset. It compares classification models, evaluates their performance, and presents applicant assessments through an interactive Streamlit dashboard.
 
 ## Objective
 
