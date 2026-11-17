@@ -21,6 +21,20 @@ The dataset documentation includes a cost matrix: incorrectly classifying a bad-
 
 Python, Pandas, NumPy, Scikit-learn, Joblib, Streamlit.
 
+## Application screenshots
+
+### CreditLens model overview and evaluation
+
+![CreditLens model overview](assets/creditlens-overview.png)
+
+![CreditLens test-set performance and model comparison](assets/creditlens-performance.png)
+
+### Applicant assessment
+
+![CreditLens applicant assessment form](assets/creditlens-applicant-form.png)
+
+![CreditLens assessment result](assets/creditlens-assessment-result.png)
+
 ## Project structure
 
 ```text
