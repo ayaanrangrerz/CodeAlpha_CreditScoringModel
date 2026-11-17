@@ -83,7 +83,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 python train.py
 ```
 
-The script downloads the OpenML dataset, creates a stratified 80/20 train/test split, compares Logistic Regression, Decision Tree, and Random Forest, and saves the selected model and evaluation reports.
+The script downloads the OpenML dataset, creates a stratified 80/20 train/test split, compares Logistic Regression, Decision Tree, and Random Forest using 5-fold stratified cross-validation on the training split, then evaluates the selected model once on the untouched holdout test split. The model, feature metadata, and evaluation reports are generated locally.
 
 ## Launch the app
 
@@ -97,7 +97,7 @@ streamlit run app.py
 python -m unittest discover -s tests -v
 ```
 
-Run training before the smoke test because the test checks the generated model artifact.
+Run training before the smoke test because tests load the generated model and reports. GitHub Actions repeats training and testing on pushes and pull requests.
 
 ## Evaluation
 
