@@ -54,15 +54,15 @@ with overview:
     if METRICS_PATH.exists():
         metrics = json.loads(METRICS_PATH.read_text())
         st.subheader("Test-set performance")
-        chosen = metrics["model_comparison"][artifact["selected_model"]]
+        chosen = metrics["holdout_test_metrics"]
         a, b, c, d, e = st.columns(5)
         a.metric("Accuracy", f"{chosen['accuracy']:.1%}")
         b.metric("Bad-risk recall", f"{chosen['bad_recall']:.1%}")
         c.metric("Bad-risk precision", f"{chosen['bad_precision']:.1%}")
         d.metric("Bad-risk F1", f"{chosen['bad_f1']:.1%}")
         e.metric("ROC-AUC", f"{chosen['roc_auc']:.3f}")
-        st.subheader("Model comparison")
-        comparison = pd.DataFrame(metrics["model_comparison"]).T
+        st.subheader("5-fold cross-validation model comparison")
+        comparison = pd.DataFrame(metrics["cross_validation_comparison"]).T
         st.dataframe(comparison.style.format("{:.3f}"), use_container_width=True)
 
 with assessment:
