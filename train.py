@@ -28,16 +28,32 @@ REPORT_DIR = ROOT / "reports"
 def load_dataset() -> tuple[pd.DataFrame, pd.Series]:
     """Fetch the classic 1,000-row German Credit dataset from OpenML."""
     print("Downloading/loading OpenML dataset: credit-g ...")
-    bunch = fetch_openml(name="credit-g", version=1, as_frame=True)
-    X = bunch.data.copy()
-    y = bunch.target.copy()
-    if isinstance(y, pd.DataFrame):
-        y = y.iloc[:, 0]
-    y = y.astype(str).str.strip().str.lower()
-    y = y.map({"good": "good", "bad": "bad", "1": "good", "2": "bad"})
-    if y.isna().any():
-        raise ValueError("Unexpected target labels in dataset.")
-    return X, y
+    try:
+        bunch = fetch_openml(name="credit-g", version=1, as_frame=True)
+        X = bunch.data.copy()
+        y = bunch.target.copy()
+        if isinstance(y, pd.DataFrame):
+            y = y.iloc[:, 0]
+        y = y.astype(str).str.strip().str.lower()
+        y = y.map({"good": "good", "bad": "bad", "1": "good", "2": "bad"})
+        if y.isna().any():
+            raise ValueError("Unexpected target labels in OpenML dataset.")
+        return X, y
+    except Exception as openml_error:
+        # OpenML has intermittent outages; use a mirror of the same German Credit
+        # dataset so CI training does not depend on the OpenML API being available.
+        mirror_url = (
+            "https://raw.githubusercontent.com/selva86/datasets/"
+            "master/GermanCredit.csv"
+        )
+        print(f"OpenML unavailable ({openml_error}); loading the dataset mirror...")
+        data = pd.read_csv(mirror_url)
+        if "credit_risk" not in data.columns:
+            raise ValueError("German Credit dataset mirror has no credit_risk target.")
+        y = data.pop("credit_risk").map({1: "good", 0: "bad"})
+        if y.isna().any():
+            raise ValueError("Unexpected target labels in German Credit mirror.")
+        return data, y
 
 
 def build_pipeline(X: pd.DataFrame, estimator) -> Pipeline:
