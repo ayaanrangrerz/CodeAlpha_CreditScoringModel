@@ -119,7 +119,7 @@ def main() -> None:
             "cv_bad_roc_auc_std": float(scores["test_bad_roc_auc"].std()),
         }
         print(f"{name}: CV bad recall={results[name]['cv_bad_recall_mean']:.3f}, "
-              f"CV ROC-AUC={results[name]['cv_roc_auc_mean']:.3f}")
+              f"CV ROC-AUC={results[name]['cv_bad_roc_auc_mean']:.3f}")
 
     # Select using training-only cross-validation; keep the holdout test set untouched.
     best_name = max(
